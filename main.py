@@ -2,7 +2,9 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-
+from scipy.stats import f_oneway
+import re
+from textblob import TextBlob
 # add merge code also
 
 
@@ -53,16 +55,17 @@ for col in restaurant.columns:
 
 #data wrangling
   #handle missing values
-restaurant.drop(columns=['Collections'], inplace =True)
+restaurant = restaurant.drop(columns=['Collections'])
 
-restaurant['Timings'].fillna('Not Specified', inplace=True)
-restaurant['Reviewer'].fillna('Anonymous', inplace=True)
-restaurant['Review'].fillna('No Review', inplace=True)
-restaurant['Rating'].fillna('Rating', inplace=True)
-restaurant['Metadata'].fillna('No Metadata', inplace=True)
-restaurant['Time'].fillna('Unknown', inplace=True)
-restaurant['Restaurant'].fillna('Unknown', inplace=True)
-restaurant['Pictures'].fillna(0, inplace=True)
+# Fill missing values properly (no inplace warnings)
+restaurant['Timings'] = restaurant['Timings'].fillna('Not Specified')
+restaurant['Reviewer'] = restaurant['Reviewer'].fillna('Anonymous')
+restaurant['Review'] = restaurant['Review'].fillna('No Review')
+restaurant['Rating'] = restaurant['Rating'].fillna('Rating')          # can later convert to numeric
+restaurant['Metadata'] = restaurant['Metadata'].fillna('No Metadata')
+restaurant['Time'] = restaurant['Time'].fillna('Unknown')
+restaurant['Restaurant'] = restaurant['Restaurant'].fillna('Unknown')
+restaurant['Pictures'] = restaurant['Pictures'].fillna(0)
 print("Missing values count per column ",)
 print(restaurant.isnull().sum())
 
@@ -208,46 +211,170 @@ restaurant.reset_index(drop=True, inplace=True)
 # -Decline indicates reduced user activity or competition pressure.
 
 
-#Chart-6# Understanding Rating Trend Over Years (Top Restaurants)
+#Chart-6# Understanding Rating Trend Over Years (Top 5 Restaurants)
 
-# Ensure Time is datetime
-restaurant['Time'] = pd.to_datetime(restaurant['Time'], errors='coerce')
+# restaurant['Time'] = pd.to_datetime(restaurant['Time'], errors='coerce')
 
-# Create Year column
-restaurant['Year'] = restaurant['Time'].dt.year
- 
-print(restaurant.columns)
-# Top 5 restaurants by number of reviews
-top_restaurants = restaurant['Restaurant'].value_counts().head(5)
+# restaurant['Year'] = restaurant['Time'].dt.year
 
-plt.figure(figsize=(12,6))
+# top_restaurants = restaurant['Restaurant'].value_counts().head(5)
 
-for rest in top_restaurants.index:
-    data = restaurant[restaurant['Restaurant'] == rest]
+# plt.figure(figsize=(12,6))
+# for rest in top_restaurants.index:
+#     data = restaurant[restaurant['Restaurant'] == rest]
 
-    yearly_avg = (
-        data.groupby('Year')['Rating']
-        .mean()
-        .dropna()
-    )
+#     yearly_avg = (
+#         data.groupby('Year')['Rating']
+#         .mean()
+#         .dropna()
+#     )
 
-    if not yearly_avg.empty:
-        plt.plot(
-            yearly_avg.index.astype(int),
-            yearly_avg.values,
-            marker='o',
-            linewidth=2,
-            label=rest
-        )
+#     if not yearly_avg.empty:
+#         plt.plot(
+#             yearly_avg.index.astype(int),
+#             yearly_avg.values,
+#             marker='o',
+#             linewidth=2,
+#             label=rest
+#         )
 
-years = sorted(restaurant['Year'].dropna().astype(int).unique())
-plt.xticks(years, rotation=45)
+# years = sorted(restaurant['Year'].dropna().astype(int).unique())
+# plt.xticks(years, rotation=45)
 
-plt.title("Rating Trend Over Years for Top Restaurants")
-plt.xlabel("Year")
-plt.ylabel("Average Rating")
-plt.legend(title="Restaurant", bbox_to_anchor=(1.05, 1), loc='upper left')
-plt.grid(alpha=0.3)
-plt.tight_layout()
+# plt.title("Rating Trend Over Years for Top Restaurants")
+# plt.xlabel("Year")
+# plt.ylabel("Average Rating")
+# plt.legend(title="Restaurant", bbox_to_anchor=(1.05, 1), loc='upper left')
+# plt.grid(alpha=0.3)
+# plt.tight_layout()
+# plt.show()
+
+# Why this chart was chosen
+# -A line graph is used to observe how average ratings of top restaurants change over different years and to compare trends over time.
+
+# Key insights from the chart
+# -Not all restaurants have ratings for every year, so some lines start later.
+# -Established restaurants show stable ratings, while newer ones have limited but improving data.
+# -Some restaurants show a rise or fall in ratings, indicating changing customer perception.
+
+# Positive business impact
+# -Consistent or improving ratings help restaurants build trust, attract more customers, and increase orders, leading to positive business growth.
+
+# Negative growth insights (if any)
+# -A decline in ratings in certain years may indicate service or quality issues, which can negatively affect customer retention and future sales.
+
+#Hypothesis Statement 1
+#Do higher-cost restaurants have higher ratings?
+#H0(Null Hypothesis): There is no significant difference in average ratings between cost categories
+#H1(Alternate Hypothesis): Average ratings significantly differ across cost categories.
+#Statistical Test
+#-One-way ANOVA
+# used because: More than 2 groups(Low, Medium, High, Premiun), Comparing mean ratings
+# restaurant['Cost_clean'] = restaurant['Cost'].str.replace('[^0-9]', '', regex=True)
+# restaurant['Cost_clean'] = pd.to_numeric(restaurant['Cost_clean'], errors='coerce')
+
+# bins = [0, 300, 600, 1000, 5000]
+# labels = ['Low', 'Medium', 'High', 'Premium']
+# restaurant['Cost_Category'] = pd.cut(restaurant['Cost_clean'], bins=bins, labels=labels)
+# # Drop missing values
+# anova_data = restaurant[['Cost_Category', 'Rating']].dropna()
+# # Group ratings by cost category
+# groups = [
+#     anova_data[anova_data['Cost_Category'] == cat]['Rating']
+#     for cat in anova_data['Cost_Category'].unique()
+# ]
+# # Perform ANOVA
+# f_stat, p_value = f_oneway(*groups)
+# print("F-statistic:", f_stat)
+# print("P-value:", p_value)
+
+
+# #Interpretation (exam/report ready)
+# -Reject the null hypothesis (H₀)
+# There is a significant difference in average ratings across cost categories.
+# -Business insight:
+# Higher-cost restaurants tend to have higher ratings, while lower-cost ones may have slightly lower ratings
+# Platform can promote premium and high-rated restaurants strategically
+# Shows pricing correlates with perceived quality
+
+
+#Hypothesis Statement 2
+#Do restaurant with more pictures have higher ratings?
+#H0(Null Hypothesis): There is no relationship between number of pictures and ratings.
+#H1(Alternate Hypothesis): Restaurant with more pictures tend to have higher ratings.
+#Statistical Test:
+#used for relationship between two numerical variables
+# from scipy.stats import pearsonr
+# corr_data = restaurant[['Pictures', 'Rating']].dropna()
+# corr, p_value = pearsonr(corr_data['Pictures'], corr_data['Rating'])
+# print("Correlation: ", corr)
+# print("P-value: ", p_value)
+
+# #nterpretation (exam/report ready)
+# -Reject the null hypothesis (H₀)
+# There is a statistically significant relationship between number of pictures and ratings, but the correlation is very weak.
+# -Business insight:
+# More pictures slightly improve customer perception
+# But other factors like service, food quality, ambiance play a much bigger role
+# Platform can encourage restaurants to upload pictures, but don’t rely on pictures alone to boost ratings
+
+
+
+#Hypothesis Statement 3
+#Do certain cuisines receive higher ratings than others?
+#H0(Null hypothesis): Average ratings are the same for all cuisines.
+#H1(Alternate hypothesis): At least one cuisine has a signnificantly different average rating.
+#Statistical Test:
+#One-Way ANOVA
+#Used because: We are comparing average ratings (numerical) across multiple cuisine categories(categorical)
+# top_cuisines=restaurant['Cuisines'].value_counts().head(5).index
+# cuisines_data = restaurant[restaurant['Cuisines']. isin(top_cuisines)]
+# anova_data = cuisines_data[['Cuisines', 'Rating']].dropna()
+# groups = [anova_data[anova_data['Cuisines']==cuisine]['Rating'] for cuisine in top_cuisines]
+# f_stat, p_value = f_oneway(*groups)
+# print("F-Statistic: ", f_stat)
+# print("P-Value: ", p_value)
+
+# #Interpretation
+# -Reject the null hypothesis (H₀)
+# There is a statistically significant difference in average ratings among top cuisines. Some cuisines consistently get higher ratings, while others receive lower ratings.
+# -Business insight:
+# High-rated cuisines can be promoted more on the platform to attract customers.
+# Low-rated cuisines indicate areas for quality improvement, such as service, food, or presentation.
+# Helps restaurants and the platform make data-driven marketing and improvement decisions.
+
+
+#Cleaning the review column
+restaurant=restaurant.dropna(subset=['Review'])
+def clean_review(text):
+    text = str(text).lower() #lowercase
+    text = re.sub(r'[^a-z0-9\s]', '', text)  #Punctuation
+    text = re.sub(r'\s+', ' ', text).strip()  #Extra Spaces
+    return text
+restaurant['Cleaned_Review'] = restaurant['Review'].apply(clean_review)
+
+restaurant['Sentiment']=restaurant['Cleaned_Review'].apply(lambda x: TextBlob(x).sentiment.polarity)
+def sentiment_label(score):
+    if score > 0.1:
+        return 'Positive'
+    elif score < -0.1:
+        return 'Negative'
+    else: return 'Neutral'
+restaurant['Sentiment_Label']= restaurant['Sentiment'].apply(sentiment_label)
+
+
+sentiment_counts = restaurant['Sentiment_Label'].value_counts()
+
+plt.figure(figsize=(6,6))
+plt.pie(
+    sentiment_counts,
+    labels=sentiment_counts.index,
+    autopct='%1.1f%%',
+    startangle=90
+)
+plt.title("Distribution of Review Sentiment")
 plt.show()
+
+
+
 
