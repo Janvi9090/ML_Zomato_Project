@@ -344,7 +344,7 @@ restaurant.reset_index(drop=True, inplace=True)
 # Helps restaurants and the platform make data-driven marketing and improvement decisions.
 
 
-#Cleaning the review column
+# #Cleaning the review column
 restaurant=restaurant.dropna(subset=['Review'])
 def clean_review(text):
     text = str(text).lower() #lowercase
@@ -365,16 +365,58 @@ restaurant['Sentiment_Label']= restaurant['Sentiment'].apply(sentiment_label)
 
 sentiment_counts = restaurant['Sentiment_Label'].value_counts()
 
-plt.figure(figsize=(6,6))
-plt.pie(
-    sentiment_counts,
-    labels=sentiment_counts.index,
-    autopct='%1.1f%%',
-    startangle=90
-)
-plt.title("Distribution of Review Sentiment")
-plt.show()
+# plt.figure(figsize=(6,6))
+# plt.pie(
+#     sentiment_counts,
+#     labels=sentiment_counts.index,
+#     autopct='%1.1f%%',
+#     startangle=90
+# )
+# plt.title("Distribution of Review Sentiment")
+# plt.show()
 
+
+# #Hypothesis Statement 4
+# #H0(Null Hypothesis): There is no significant difference in sentiment scores across different rating levels.
+# #H1(Alternate Hypothesis): There is a significant difference in sentiment scrores across different rating levels.
+# #ANOVA: We compare sentiment across rating groups
+# restaurant['Rating_Round']=restaurant['Rating'].round()
+# groups=[
+#     restaurant[restaurant['Rating_Round']==r]['Sentiment']
+#     for r in restaurant['Rating_Round'].dropna().unique()
+# ]
+# f_stat, p_value= f_oneway(*groups)
+# print("F-Statistic: ",f_stat)
+# print("P-value: ", p_value)
+
+# #Interpretation
+# -Restaurants with higher ratings tend to have more positive sentiment in customer reviews, whereas lower-rated restaurants show negative sentiment. This confirms that textual sentiment extracted from reviews strongly aligns with numerical ratings.
+# Business Impact
+# -Sentiment analysis can be reliably used to support or predict restaurant ratings.
+# -Platforms can identify potential issues early by monitoring negative sentiment trends.
+# -Improves decision-making for restaurant ranking and recommendations.
+# Negative Growth Insight 
+# -Restaurants showing increasing negative sentiment are likely to experience a future decline in ratings, which can impact customer trust and overall platform credibility.
+
+
+
+# Hypothesis Statement 5
+#To examine whether customer sentiment differs across different cuisine types.
+#H0(Null Hypothesis): There is no statistically significant difference in sentiment scores across different cuisines.
+#H1(Alternate Hypothesis): There is a statistically significant difference in sentiment scores across different cuisines.
+#One-Way ANOVA: Cuisine type is a categorical variable with multiple groups
+
+top_cuisines=restaurant['Cuisines'].value_counts().head(5).index
+anova_data = restaurant[restaurant['Cuisines'].isin(top_cuisines)]
+
+groups = [
+    anova_data[anova_data['Cuisines']==cuisine]['Sentiment']
+    for cuisine in top_cuisines
+]
+
+f_stat, p_value = f_oneway(*groups)
+print("F-statistic: ", f_stat)
+print("P-Value: ", p_value)
 
 
 
