@@ -1,10 +1,4 @@
-# =========================
-# Zomato Restaurant Analysis
-# =========================
-
-# -------------------------
 # 1. Libraries
-# -------------------------
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -19,9 +13,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, accuracy_score
 from imblearn.over_sampling import SMOTE
 
-# -------------------------
 # 2. Load and Merge Datasets
-# -------------------------
 D1 = pd.read_csv('Zomato_Restaurant_names_and_Metadata.csv')
 D2 = pd.read_csv('Zomato_Restaurant_reviews.csv')
 
@@ -30,9 +22,7 @@ merged_D = pd.merge(D1, D2, left_on='Name', right_on='Restaurant', how='inner')
 merged_D.to_csv('Zomato_merged.csv', index=False)
 print("Datasets merged and saved successfully!")
 
-# -------------------------
-# 3. Load Merged Data
-# -------------------------
+# 3. Load Merged Data-
 restaurant = pd.read_csv("Zomato_merged.csv")
 pd.set_option('display.max_columns', None)
 
@@ -41,17 +31,13 @@ print(restaurant.head())
 print("Column names: ", restaurant.columns)
 print("Total count of rows and columns: ", restaurant.shape)
 
-# -------------------------
 # 4. Handle Duplicate Values
-# -------------------------
 print("Duplicate values: ", restaurant.duplicated().sum())
 restaurant.drop_duplicates(inplace=True)
 print("After removal of duplicates: ", restaurant.duplicated().sum())
 print("Total count of rows and columns: ", restaurant.shape)
 
-# -------------------------
 # 5. Missing Values Analysis
-# -------------------------
 print("Missing values per column:\n", restaurant.isnull().sum())
 
 missing_counts = restaurant.isnull().sum()
@@ -70,9 +56,7 @@ for col in missing_counts.index:
     plt.title(f"Missing Values in '{col}' Column")
     plt.show()
 
-# -------------------------
 # 6. Unique Values per Column
-# -------------------------
 for col in restaurant.columns:
     unique_values = restaurant[col].unique()
     print(f"Column: {col}")
@@ -80,9 +64,7 @@ for col in restaurant.columns:
     print(f"Sample unique values: {unique_values[:10]}")
     print("-"*50)
 
-# -------------------------
 # 7. Data Cleaning / Wrangling
-# -------------------------
 # Drop unnecessary columns
 if 'Collections' in restaurant.columns:
     restaurant = restaurant.drop(columns=['Collections'])
