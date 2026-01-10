@@ -406,17 +406,142 @@ sentiment_counts = restaurant['Sentiment_Label'].value_counts()
 #H1(Alternate Hypothesis): There is a statistically significant difference in sentiment scores across different cuisines.
 #One-Way ANOVA: Cuisine type is a categorical variable with multiple groups
 
-top_cuisines=restaurant['Cuisines'].value_counts().head(5).index
-anova_data = restaurant[restaurant['Cuisines'].isin(top_cuisines)]
+# top_cuisines=restaurant['Cuisines'].value_counts().head(5).index
+# anova_data = restaurant[restaurant['Cuisines'].isin(top_cuisines)]
 
-groups = [
-    anova_data[anova_data['Cuisines']==cuisine]['Sentiment']
-    for cuisine in top_cuisines
-]
+# groups = [
+#     anova_data[anova_data['Cuisines']==cuisine]['Sentiment']
+#     for cuisine in top_cuisines
+# ]
 
-f_stat, p_value = f_oneway(*groups)
-print("F-statistic: ", f_stat)
-print("P-Value: ", p_value)
+# f_stat, p_value = f_oneway(*groups)
+# print("F-statistic: ", f_stat)
+# print("P-Value: ", p_value)
+
+print("Missing values are:",restaurant['Rating'].isnull().sum())
+restaurant = restaurant.dropna(subset=['Rating'])
+print("Missing values after are:",restaurant['Rating'].isnull().sum())
+
+# #Common Preprocessing
+# from sklearn.feature_extraction.text import TfidfVectorizer
+# # from scipy.sparse import hstack
+# from sklearn.model_selection import train_test_split
+# from sklearn.linear_model import LogisticRegression
+# from sklearn.metrics import accuracy_score, classification_report
+# from sklearn.pipeline import Pipeline
+# # from sklearn.model_selection import GridSearchCV
+# from imblearn.over_sampling import SMOTE
+# from imblearn.pipeline import Pipeline as ImbPipeline
+# # print(restaurant.columns)
+# smote = SMOTE(random_state=42)
+
+restaurant['Rating_Category'] = pd.cut(
+    restaurant['Rating'],
+    bins=[0, 2.5, 3.5, 5],
+    labels=['Low', 'Medium', 'High']
+)
+
+# restaurant[['Rating', 'Rating_Category']]
+
+# restaurant= restaurant.dropna(subset='Rating_Category')
+# X= restaurant['Cleaned_Review']
+# y= restaurant['Rating_Category']
 
 
+# X_train, X_test, y_train, y_test = train_test_split(
+#     X, y, test_size=0.2, random_state=42, stratify=y
+# )
 
+# X_train_res, y_train_res = smote.fit_resample(X_train, y_train)
+# # pipeline_lr = Pipeline([
+# #     ('tfidf', TfidfVectorizer(
+# #         max_features=5000,
+# #         ngram_range=(1,2),
+# #         min_df=5
+# #     )),
+# #     ('clf', LogisticRegression(
+# #         max_iter=1000,
+# #         class_weight='balanced',
+# #         solver='lbfgs',
+# #         # multi_class= 'multinomial'
+# #     ))
+# # ])
+
+# pipeline = ImbPipeline([
+#     ('tfidf', TfidfVectorizer(max_features=5000, ngram_range=(1,2), min_df=5)),
+#     ('smote', SMOTE(random_state=42)),
+#     ('clf', LogisticRegression(max_iter=1000, class_weight={'Low':1, 'Medium':2, 'High':1}, solver='lbfgs'))
+# ])
+
+# # pipeline_lr.fit(X_train, y_train)
+# # y_pred = pipeline_lr.predict(X_test)
+
+# # # print("Logistic Regression Accuracy: ", accuracy_score(y_test, y_pred))
+# # # print(classification_report(y_test, y_pred))
+
+# # print("Baseline Accuracy:", accuracy_score(y_test, y_pred))
+# # print(classification_report(y_test, y_pred))
+
+# # param_grid={
+# #     'tfidf__max_features': [3000, 5000],
+# #     'clf__C': [0.1, 1, 10]
+# # }
+
+# # grid_lr = GridSearchCV(
+# #     pipeline_lr,
+# #     param_grid,
+# #     cv=5,
+# #     scoring='f1_macro',
+# #     n_jobs=-1
+# # )
+
+# # grid_lr.fit(X_train, y_train)
+
+# # print("Best Parameters: ", grid_lr.best_params_)
+# # print("Best CV Score: ", grid_lr.best_score_)
+
+# # best_model = grid_lr.best_estimator_
+# # y_pred_best= best_model.predict(X_test)
+# # print("Best Model Accuracy:", accuracy_score(y_test, y_pred_best))
+# # print(classification_report(y_test, y_pred_best))
+
+
+# pipeline.fit(X_train, y_train)  # reshape for SMOTE
+# y_pred = pipeline.predict(X_test)
+
+# # Metrics
+# print("Accuracy: ", accuracy_score(y_test, y_pred))
+# print(classification_report(y_test, y_pred))
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report, accuracy_score
+from imblearn.over_sampling import SMOTE
+
+#  TF-IDF
+tfidf = TfidfVectorizer(max_features=5000, ngram_range=(1,2), min_df=3)
+X = tfidf.fit_transform(restaurant['Cleaned_Review'])
+y = restaurant['Rating_Category']
+
+#  Train/test split
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+
+#  SMOTE on TF-IDF numeric matrix
+smote = SMOTE(random_state=42)
+X_train_res, y_train_res = smote.fit_resample(X_train, y_train)
+
+#  Logistic Regression
+lr = LogisticRegression(
+    max_iter=1000,
+    class_weight='balanced',
+    solver='lbfgs'
+)
+lr.fit(X_train_res, y_train_res)
+
+# Predictions & evaluation
+y_pred = lr.predict(X_test)
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print(classification_report(y_test, y_pred))
