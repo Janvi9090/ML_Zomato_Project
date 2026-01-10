@@ -65,7 +65,7 @@ Overall, the final merged dataset is well-structured, rich in information, and s
 
 ## Key Steps
 
-1. **Data Cleaning and Wrangling**
+### 1. Data Cleaning and Wrangling
 
    * Remove duplicates.
    * Fill missing values with appropriate defaults.
@@ -128,7 +128,7 @@ Overall, the final merged dataset is well-structured, rich in information, and s
  * pd.cut converts continuous or numeric data into categories for classification. TF-IDF captures textual information in a numeric form suitable for ML algorithms like Logistic Regression.
 
 
-2. **Exploratory Data Analysis (EDA)**
+### 2. Exploratory Data Analysis (EDA)
 
    * Distribution of Ratings.
    * Top 10 Cuisines.
@@ -209,7 +209,7 @@ Overall, the final merged dataset is well-structured, rich in information, and s
       * Even a small amount of missing critical data (like ratings or reviews) can bias insights and predictions, potentially affecting marketing and service improvements.
 
 
-3. **Hypothesis Testing**
+### 3. Hypothesis Testing
 
 **H1:** Cost vs Rating (ANOVA).
 
@@ -272,11 +272,11 @@ Overall, the final merged dataset is well-structured, rich in information, and s
 
    - **Statistical Test Used to Obtain P-Value:**
     One-way ANOVA (f_oneway)
-    
+
    -**Why this test was chosen:**
     Cuisine is a categorical variable and sentiment is numeric. ANOVA checks if sentiment significantly differs across the selected cuisine groups.
 
-4. **Sentiment Analysis**
+### 4. Sentiment Analysis
 
    * Clean and preprocess review text.
    * Calculate sentiment polarity using TextBlob.
@@ -319,7 +319,7 @@ Overall, the final merged dataset is well-structured, rich in information, and s
  *  What technique did you use to handle the imbalance dataset and why? (If needed to be balanced)
     To handle this, I used SMOTE (Synthetic Minority Oversampling Technique) to oversample the minority classes in the training data. This prevents the model from being biased toward the majority class and improves classification performance.
 
-5. **Machine Learning Model**
+### 5. Machine Learning Model
 
    * Create rating categories: Low, Medium, High.
    * TF-IDF vectorization of review text.
