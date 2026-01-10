@@ -5,35 +5,22 @@ import seaborn as sns
 from scipy.stats import f_oneway
 import re
 from textblob import TextBlob
-# add merge code also
 
+# merge two dataset
 D1 = pd.read_csv('Zomato_Restaurant_names_and_Metadata.csv')
 D2 = pd.read_csv('Zomato_Restaurant_reviews.csv')
 
-
-# print("Metadata Columns:\n", D1.columns)
-# print(D1.head(), "\n")
-
-# print("Reviews Columns:\n", D2.columns)
-# print(D2.head())
-
-
 merged_D = pd.merge(D1, D2, left_on='Name', right_on='Restaurant', how='inner')
-
-
 merged_D.to_csv('Zomato_merged.csv', index=False)
-
 print("Datasets merged and saved successfully!")
 
 #display of data
 restaurant = pd.read_csv("Zomato_merged.csv")
 pd.set_option('display.max_columns', None)
-# print(restaurant.head())
-
+print(restaurant.head())
 
 #Names of columns
 print("Column names: ", restaurant.columns)
-
 
 #To count Rows and columns
 print("Total count of rows and columns: ",restaurant.shape)
@@ -41,9 +28,8 @@ print("Total count of rows and columns: ",restaurant.shape)
 # duplicate values count
 print("Duplicate values: ",restaurant.duplicated().sum())
 restaurant.drop_duplicates(inplace=True)
-print("After removal count: ", restaurant.duplicated().sum())
+print("After removal of duplicate values count: ", restaurant.duplicated().sum())
 print("Total count of rows and columns: ",restaurant.shape)
-
 
 #To count missing values(visualizing)
 print("Missing values count per column ",)
@@ -52,14 +38,14 @@ print(restaurant.isnull().sum())
 missing_counts = restaurant.isnull().sum()
 missing_counts = missing_counts[missing_counts > 0]  # only columns with missing values
 
-# for col in missing_counts.index:
-#     missing = restaurant[col].isnull().sum()
-#     not_missing = restaurant[col].notnull().sum()
-#     plt.figure(figsize=(6,6))
-#     plt.pie([missing, not_missing], labels=['Missing', 'Available'], autopct='%1.1f%%',
-#             colors=['red','green'], startangle=90, shadow=True)
-#     plt.title(f"Missing Values in '{col}' Column")
-#     plt.show()
+for col in missing_counts.index:
+    missing = restaurant[col].isnull().sum()
+    not_missing = restaurant[col].notnull().sum()
+    plt.figure(figsize=(6,6))
+    plt.pie([missing, not_missing], labels=['Missing', 'Available'], autopct='%1.1f%%',
+            colors=['red','green'], startangle=90, shadow=True)
+    plt.title(f"Missing Values in '{col}' Column")
+    plt.show()
 
 #unique values for each value
 for col in restaurant.columns:
@@ -71,10 +57,10 @@ for col in restaurant.columns:
 
 
 #data wrangling
-  #handle missing values
+#handle missing values
 restaurant = restaurant.drop(columns=['Collections'])
 
-# Fill missing values properly (no inplace warnings)
+# Fill missing values properly
 restaurant['Timings'] = restaurant['Timings'].fillna('Not Specified')
 restaurant['Reviewer'] = restaurant['Reviewer'].fillna('Anonymous')
 restaurant['Review'] = restaurant['Review'].fillna('No Review')
@@ -95,14 +81,14 @@ restaurant.reset_index(drop=True, inplace=True)
 #data visualization
 #Chart-1
 # #Distribution of rating
-# rating_counts = restaurant['Rating'].value_counts().sort_index()
-# plt.figure(figsize=(8,5))
-# rating_counts.plot(kind='bar', color='skyblue')
-# plt.title("Distribution of Ratings")
-# plt.xlabel("Rating")
-# plt.ylabel("Number of Reviews")
-# plt.xticks(rotation=0)
-# plt.show()
+rating_counts = restaurant['Rating'].value_counts().sort_index()
+plt.figure(figsize=(8,5))
+rating_counts.plot(kind='bar', color='skyblue')
+plt.title("Distribution of Ratings")
+plt.xlabel("Rating")
+plt.ylabel("Number of Reviews")
+plt.xticks(rotation=0)
+plt.show()
 
 # Analysis for report:
 # Why this chart:
@@ -123,14 +109,14 @@ restaurant.reset_index(drop=True, inplace=True)
 
 #Chart-2
 # Count of cuisines
-# cuisine_counts = restaurant['Cuisines'].value_counts().head(10)
-# plt.figure(figsize=(10,5))
-# cuisine_counts.plot(kind='bar', color='orange')
-# plt.title("Top 10 Cuisines")
-# plt.xlabel("Cuisine")
-# plt.ylabel("Number of Restaurants")
-# plt.xticks(rotation=45)
-# plt.show()
+cuisine_counts = restaurant['Cuisines'].value_counts().head(10)
+plt.figure(figsize=(10,5))
+cuisine_counts.plot(kind='bar', color='orange')
+plt.title("Top 10 Cuisines")
+plt.xlabel("Cuisine")
+plt.ylabel("Number of Restaurants")
+plt.xticks(rotation=45)
+plt.show()
 
 # Analysis for report:
 # Why this chart:
@@ -150,11 +136,11 @@ restaurant.reset_index(drop=True, inplace=True)
 
 #Chart-3
 # #Rating Outliers
-# plt.figure(figsize=(6,4))
-# plt.boxplot(restaurant['Rating'].dropna())
-# plt.title("Box Plot of Ratings")
-# plt.ylabel("Rating")
-# plt.show()
+plt.figure(figsize=(6,4))
+plt.boxplot(restaurant['Rating'].dropna())
+plt.title("Box Plot of Ratings")
+plt.ylabel("Rating")
+plt.show()
 
 # Analysis
 # Why this chart?
@@ -172,21 +158,21 @@ restaurant.reset_index(drop=True, inplace=True)
 
 #Chart-4
 #Restaurant by Cost Range
-# restaurant['Cost_clean'] = restaurant['Cost'].str.replace('[^0-9]', '', regex=True)
-# restaurant['Cost_clean'] = pd.to_numeric(restaurant['Cost_clean'], errors='coerce')
+restaurant['Cost_clean'] = restaurant['Cost'].str.replace('[^0-9]', '', regex=True)
+restaurant['Cost_clean'] = pd.to_numeric(restaurant['Cost_clean'], errors='coerce')
 
-# bins = [0, 300, 600, 1000, 5000]
-# labels = ['Low', 'Medium', 'High', 'Premium']
-# restaurant['Cost_Category'] = pd.cut(restaurant['Cost_clean'], bins=bins, labels=labels)
+bins = [0, 300, 600, 1000, 5000]
+labels = ['Low', 'Medium', 'High', 'Premium']
+restaurant['Cost_Category'] = pd.cut(restaurant['Cost_clean'], bins=bins, labels=labels)
 
-# cost_counts = restaurant['Cost_Category'].value_counts()
+cost_counts = restaurant['Cost_Category'].value_counts()
 
-# plt.figure(figsize=(7,5))
-# cost_counts.plot(kind='bar')
-# plt.title("Restaurants by Cost Category")
-# plt.xlabel("Cost Category")
-# plt.ylabel("Number of Restaurants")
-# plt.show()
+plt.figure(figsize=(7,5))
+cost_counts.plot(kind='bar')
+plt.title("Restaurants by Cost Category")
+plt.xlabel("Cost Category")
+plt.ylabel("Number of Restaurants")
+plt.show()
 
 # Analysis:
 # Why this chart?
@@ -204,15 +190,15 @@ restaurant.reset_index(drop=True, inplace=True)
 
 #Chart-5
 #Reviews Over Time
-# restaurant['Time'] = pd.to_datetime(restaurant['Time'], errors='coerce')
-# reviews_over_time = restaurant.groupby(restaurant['Time'].dt.date).size()
+restaurant['Time'] = pd.to_datetime(restaurant['Time'], errors='coerce')
+reviews_over_time = restaurant.groupby(restaurant['Time'].dt.date).size()
 
-# plt.figure(figsize=(10,5))
-# plt.plot(reviews_over_time)
-# plt.title("Reviews Over Time")
-# plt.xlabel("Date")
-# plt.ylabel("Number of Reviews")
-# plt.show()
+plt.figure(figsize=(10,5))
+plt.plot(reviews_over_time)
+plt.title("Reviews Over Time")
+plt.xlabel("Date")
+plt.ylabel("Number of Reviews")
+plt.show()
 
 # Analysis
 # Why this chart?
@@ -228,58 +214,6 @@ restaurant.reset_index(drop=True, inplace=True)
 # -Decline indicates reduced user activity or competition pressure.
 
 
-#Chart-6# Understanding Rating Trend Over Years (Top 5 Restaurants)
-
-# restaurant['Time'] = pd.to_datetime(restaurant['Time'], errors='coerce')
-
-# restaurant['Year'] = restaurant['Time'].dt.year
-
-# top_restaurants = restaurant['Restaurant'].value_counts().head(5)
-
-# plt.figure(figsize=(12,6))
-# for rest in top_restaurants.index:
-#     data = restaurant[restaurant['Restaurant'] == rest]
-
-#     yearly_avg = (
-#         data.groupby('Year')['Rating']
-#         .mean()
-#         .dropna()
-#     )
-
-#     if not yearly_avg.empty:
-#         plt.plot(
-#             yearly_avg.index.astype(int),
-#             yearly_avg.values,
-#             marker='o',
-#             linewidth=2,
-#             label=rest
-#         )
-
-# years = sorted(restaurant['Year'].dropna().astype(int).unique())
-# plt.xticks(years, rotation=45)
-
-# plt.title("Rating Trend Over Years for Top Restaurants")
-# plt.xlabel("Year")
-# plt.ylabel("Average Rating")
-# plt.legend(title="Restaurant", bbox_to_anchor=(1.05, 1), loc='upper left')
-# plt.grid(alpha=0.3)
-# plt.tight_layout()
-# plt.show()
-
-# Why this chart was chosen
-# -A line graph is used to observe how average ratings of top restaurants change over different years and to compare trends over time.
-
-# Key insights from the chart
-# -Not all restaurants have ratings for every year, so some lines start later.
-# -Established restaurants show stable ratings, while newer ones have limited but improving data.
-# -Some restaurants show a rise or fall in ratings, indicating changing customer perception.
-
-# Positive business impact
-# -Consistent or improving ratings help restaurants build trust, attract more customers, and increase orders, leading to positive business growth.
-
-# Negative growth insights (if any)
-# -A decline in ratings in certain years may indicate service or quality issues, which can negatively affect customer retention and future sales.
-
 #Hypothesis Statement 1
 #Do higher-cost restaurants have higher ratings?
 #H0(Null Hypothesis): There is no significant difference in average ratings between cost categories
@@ -287,23 +221,23 @@ restaurant.reset_index(drop=True, inplace=True)
 #Statistical Test
 #-One-way ANOVA
 # used because: More than 2 groups(Low, Medium, High, Premiun), Comparing mean ratings
-# restaurant['Cost_clean'] = restaurant['Cost'].str.replace('[^0-9]', '', regex=True)
-# restaurant['Cost_clean'] = pd.to_numeric(restaurant['Cost_clean'], errors='coerce')
+restaurant['Cost_clean'] = restaurant['Cost'].str.replace('[^0-9]', '', regex=True)
+restaurant['Cost_clean'] = pd.to_numeric(restaurant['Cost_clean'], errors='coerce')
 
-# bins = [0, 300, 600, 1000, 5000]
-# labels = ['Low', 'Medium', 'High', 'Premium']
-# restaurant['Cost_Category'] = pd.cut(restaurant['Cost_clean'], bins=bins, labels=labels)
+bins = [0, 300, 600, 1000, 5000]
+labels = ['Low', 'Medium', 'High', 'Premium']
+restaurant['Cost_Category'] = pd.cut(restaurant['Cost_clean'], bins=bins, labels=labels)
 # # Drop missing values
-# anova_data = restaurant[['Cost_Category', 'Rating']].dropna()
+anova_data = restaurant[['Cost_Category', 'Rating']].dropna()
 # # Group ratings by cost category
-# groups = [
-#     anova_data[anova_data['Cost_Category'] == cat]['Rating']
-#     for cat in anova_data['Cost_Category'].unique()
-# ]
+groups = [
+    anova_data[anova_data['Cost_Category'] == cat]['Rating']
+    for cat in anova_data['Cost_Category'].unique()
+]
 # # Perform ANOVA
-# f_stat, p_value = f_oneway(*groups)
-# print("F-statistic:", f_stat)
-# print("P-value:", p_value)
+f_stat, p_value = f_oneway(*groups)
+print("F-statistic:", f_stat)
+print("P-value:", p_value)
 
 
 # #Interpretation (exam/report ready)
@@ -321,11 +255,11 @@ restaurant.reset_index(drop=True, inplace=True)
 #H1(Alternate Hypothesis): Restaurant with more pictures tend to have higher ratings.
 #Statistical Test:
 #used for relationship between two numerical variables
-# from scipy.stats import pearsonr
-# corr_data = restaurant[['Pictures', 'Rating']].dropna()
-# corr, p_value = pearsonr(corr_data['Pictures'], corr_data['Rating'])
-# print("Correlation: ", corr)
-# print("P-value: ", p_value)
+from scipy.stats import pearsonr
+corr_data = restaurant[['Pictures', 'Rating']].dropna()
+corr, p_value = pearsonr(corr_data['Pictures'], corr_data['Rating'])
+print("Correlation: ", corr)
+print("P-value: ", p_value)
 
 # #nterpretation (exam/report ready)
 # -Reject the null hypothesis (H₀)
@@ -344,13 +278,13 @@ restaurant.reset_index(drop=True, inplace=True)
 #Statistical Test:
 #One-Way ANOVA
 #Used because: We are comparing average ratings (numerical) across multiple cuisine categories(categorical)
-# top_cuisines=restaurant['Cuisines'].value_counts().head(5).index
-# cuisines_data = restaurant[restaurant['Cuisines']. isin(top_cuisines)]
-# anova_data = cuisines_data[['Cuisines', 'Rating']].dropna()
-# groups = [anova_data[anova_data['Cuisines']==cuisine]['Rating'] for cuisine in top_cuisines]
-# f_stat, p_value = f_oneway(*groups)
-# print("F-Statistic: ", f_stat)
-# print("P-Value: ", p_value)
+top_cuisines=restaurant['Cuisines'].value_counts().head(5).index
+cuisines_data = restaurant[restaurant['Cuisines']. isin(top_cuisines)]
+anova_data = cuisines_data[['Cuisines', 'Rating']].dropna()
+groups = [anova_data[anova_data['Cuisines']==cuisine]['Rating'] for cuisine in top_cuisines]
+f_stat, p_value = f_oneway(*groups)
+print("F-Statistic: ", f_stat)
+print("P-Value: ", p_value)
 
 # #Interpretation
 # -Reject the null hypothesis (H₀)
@@ -382,29 +316,29 @@ restaurant['Sentiment_Label']= restaurant['Sentiment'].apply(sentiment_label)
 
 sentiment_counts = restaurant['Sentiment_Label'].value_counts()
 
-# plt.figure(figsize=(6,6))
-# plt.pie(
-#     sentiment_counts,
-#     labels=sentiment_counts.index,
-#     autopct='%1.1f%%',
-#     startangle=90
-# )
-# plt.title("Distribution of Review Sentiment")
-# plt.show()
+plt.figure(figsize=(6,6))
+plt.pie(
+    sentiment_counts,
+    labels=sentiment_counts.index,
+    autopct='%1.1f%%',
+    startangle=90
+)
+plt.title("Distribution of Review Sentiment")
+plt.show()
 
 
 # #Hypothesis Statement 4
 # #H0(Null Hypothesis): There is no significant difference in sentiment scores across different rating levels.
 # #H1(Alternate Hypothesis): There is a significant difference in sentiment scrores across different rating levels.
 # #ANOVA: We compare sentiment across rating groups
-# restaurant['Rating_Round']=restaurant['Rating'].round()
-# groups=[
-#     restaurant[restaurant['Rating_Round']==r]['Sentiment']
-#     for r in restaurant['Rating_Round'].dropna().unique()
-# ]
-# f_stat, p_value= f_oneway(*groups)
-# print("F-Statistic: ",f_stat)
-# print("P-value: ", p_value)
+restaurant['Rating_Round']=restaurant['Rating'].round()
+groups=[
+    restaurant[restaurant['Rating_Round']==r]['Sentiment']
+    for r in restaurant['Rating_Round'].dropna().unique()
+]
+f_stat, p_value= f_oneway(*groups)
+print("F-Statistic: ",f_stat)
+print("P-value: ", p_value)
 
 # #Interpretation
 # -Restaurants with higher ratings tend to have more positive sentiment in customer reviews, whereas lower-rated restaurants show negative sentiment. This confirms that textual sentiment extracted from reviews strongly aligns with numerical ratings.
@@ -423,17 +357,17 @@ sentiment_counts = restaurant['Sentiment_Label'].value_counts()
 #H1(Alternate Hypothesis): There is a statistically significant difference in sentiment scores across different cuisines.
 #One-Way ANOVA: Cuisine type is a categorical variable with multiple groups
 
-# top_cuisines=restaurant['Cuisines'].value_counts().head(5).index
-# anova_data = restaurant[restaurant['Cuisines'].isin(top_cuisines)]
+top_cuisines=restaurant['Cuisines'].value_counts().head(5).index
+anova_data = restaurant[restaurant['Cuisines'].isin(top_cuisines)]
 
-# groups = [
-#     anova_data[anova_data['Cuisines']==cuisine]['Sentiment']
-#     for cuisine in top_cuisines
-# ]
+groups = [
+    anova_data[anova_data['Cuisines']==cuisine]['Sentiment']
+    for cuisine in top_cuisines
+]
 
-# f_stat, p_value = f_oneway(*groups)
-# print("F-statistic: ", f_stat)
-# print("P-Value: ", p_value)
+f_stat, p_value = f_oneway(*groups)
+print("F-statistic: ", f_stat)
+print("P-Value: ", p_value)
 
 print("Missing values are:",restaurant['Rating'].isnull().sum())
 restaurant = restaurant.dropna(subset=['Rating'])
