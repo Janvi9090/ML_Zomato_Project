@@ -1,6 +1,6 @@
 # Zomato Restaurant Analysis Project
 
-## Github Link- https://github.com/Janvi9090/ML_Zomato_Project
+ Github Link- https://github.com/Janvi9090/ML_Zomato_Project
 
 ## Project Overview
 
@@ -139,122 +139,140 @@ Overall, the final merged dataset is well-structured, rich in information, and s
 * **Visualizations**
 
 1. **Bar charts for rating distribution.**
- * Why this chart was chosen
-      A bar chart clearly shows the number of reviews for each rating. It’s easy to compare categories and spot which ratings are most common.
- * Insights from the graph 
-      Most restaurants have ratings of 4–5 stars. Very few restaurants have ratings below 2.
+ * Why this chart was chosen:
+     * A bar chart clearly shows the number of reviews for each rating. It’s easy to compare categories and spot which ratings are most common.
+ * Insights from the graph:
+      * Most restaurants have ratings of 4–5 stars. Very few restaurants have ratings below 2.
  * Will the gained insights help creating a positive business impact?
-      Yes, high-rated restaurants can be promoted to attract more customers and build trust.
+      * Yes, high-rated restaurants can be promoted to attract more customers and build trust.
  * Are there any insights that lead to negative growth? Justify.
-      Yes, restaurants with 1–2 star ratings indicate poor service or quality. These need improvement to prevent losing customers.
+      * Yes, restaurants with 1–2 star ratings indicate poor service or quality. These need improvement to prevent losing customers.
 
 2. **Bar Chart for Top Cuisines**
- * Why this chart was chosen
-      A bar chart is ideal for comparing the number of restaurants across different cuisines. It clearly shows which cuisines are most popular.
- * Insights from the graph 
-      North Indian and Chinese cuisines dominate the market, followed by Continental, Biryani, and Desserts. Other cuisines have fewer restaurants.
+ * Why this chart was chosen:
+     * A bar chart is ideal for comparing the number of restaurants across different cuisines. It clearly shows which cuisines are most popular.
+ * Insights from the graph:
+     * North Indian and Chinese cuisines dominate the market, followed by Continental, Biryani, and Desserts. Other cuisines have fewer restaurants.
  * Will the gained insights help creating a positive business impact?
-      Yes, restaurants can focus on high-demand cuisines to attract more customers and plan marketing strategies.
+     * Yes, restaurants can focus on high-demand cuisines to attract more customers and plan marketing strategies.
  * Are there any insights that lead to negative growth? Justify.
-      Yes, cuisines with very few restaurants may struggle with visibility and revenue, indicating areas of lower demand or competition.
+     * Yes, cuisines with very few restaurants may struggle with visibility and revenue, indicating areas of lower demand or competition.
 
 3. **Box plots for rating outliers.**
- * Why this chart was chosen
-      A box plot helps identify outliers and the spread of ratings. It shows the median, quartiles, and extreme values clearly.
- * Insights from the graph 
-      Most ratings are clustered between 3 and 5, with very few extremely low ratings around 1–2. This indicates generally positive reviews.
+ * Why this chart was chosen:
+      * A box plot helps identify outliers and the spread of ratings. It shows the median, quartiles, and extreme values clearly.
+ * Insights from the graph:
+      * Most ratings are clustered between 3 and 5, with very few extremely low ratings around 1–2. This indicates generally positive reviews.
  * Will the gained insights help creating a positive business impact?
-      Yes, businesses can focus on maintaining high-quality services since most restaurants already receive good ratings.
+      * Yes, businesses can focus on maintaining high-quality services since most restaurants already receive good ratings.
  * Are there any insights that lead to negative growth? Justify.
-      Yes, the few low-rating outliers indicate some restaurants may have quality or service issues, which could affect reputation if not addressed.
+      * Yes, the few low-rating outliers indicate some restaurants may have quality or service issues, which could affect reputation if not addressed.
 
 4. **Bar Chart for Restaurant by Cost Category.**
- * Why this chart was chosen
-      A bar chart clearly shows the number of restaurants in each cost category. It is easy to compare categories at a glance.
- * Insights from the graph 
-      Most restaurants fall under Medium, Premium, and High categories, while Low-cost restaurants are fewer. This shows the market is skewed toward mid-to-high-end dining.
+ * Why this chart was chosen:
+      * A bar chart clearly shows the number of restaurants in each cost category. It is easy to compare categories at a glance.
+ * Insights from the graph:
+      * Most restaurants fall under Medium, Premium, and High categories, while Low-cost restaurants are fewer. This shows the market is skewed toward mid-to-high-end dining.
  * Will the gained insights help creating a positive business impact?
-      Yes, businesses can target promotions for Medium and High-cost segments, which dominate the market.
+      * Yes, businesses can target promotions for Medium and High-cost segments, which dominate the market.
  * Are there any insights that lead to negative growth? Justify.
-      Yes, fewer Low-cost options indicate limited affordable choices, which might reduce customer reach among budget-conscious diners.
+      * Yes, fewer Low-cost options indicate limited affordable choices, which might reduce customer reach among budget-conscious diners.
 
 5. **Line charts for reviews over time.**
- * Why this chart was chosen
-      A line chart shows trends over time clearly. It helps visualize how review counts change across dates.
- * Insights from the graph 
-      Reviews increased sharply after mid-2018, indicating growing customer engagement and popularity of restaurants over time.
+ * Why this chart was chosen:
+      * A line chart shows trends over time clearly. It helps visualize how review counts change across dates.
+ * Insights from the graph:
+      * Reviews increased sharply after mid-2018, indicating growing customer engagement and popularity of restaurants over time.
  * Will the gained insights help creating a positive business impact?
-      Yes, businesses can identify peak periods and plan marketing campaigns or promotions during high engagement months.
+      * Yes, businesses can identify peak periods and plan marketing campaigns or promotions during high engagement months.
  * Are there any insights that lead to negative growth? Justify.
-      Periods with very few reviews suggest low customer interaction in early years, which could indicate underperformance or lack of awareness.
+      * Periods with very few reviews suggest low customer interaction in early years, which could indicate underperformance or lack of awareness.
 
 4. **Pie charts for sentiment distribution.**
- * Why this chart was chosen
-      A pie chart shows proportions of positive, neutral, and negative reviews clearly. It’s ideal for understanding sentiment distribution.
- * Insights from the graph 
-      Most reviews (68%) are positive, 17% neutral, and 15% negative, indicating overall customer satisfaction.
+ * Why this chart was chosen:
+      * A pie chart shows proportions of positive, neutral, and negative reviews clearly. It’s ideal for understanding sentiment distribution.
+ * Insights from the graph :
+      * Most reviews (68%) are positive, 17% neutral, and 15% negative, indicating overall customer satisfaction.
  * Will the gained insights help creating a positive business impact?
-      Yes, businesses can highlight positive sentiment in marketing and identify areas of improvement from negative feedback.
+      * Yes, businesses can highlight positive sentiment in marketing and identify areas of improvement from negative feedback.
  * Are there any insights that lead to negative growth? Justify.
-      The 15% negative reviews indicate some dissatisfaction; addressing these issues can prevent loss of customers and improve reputation.
+      * The 15% negative reviews indicate some dissatisfaction; addressing these issues can prevent loss of customers and improve reputation.
 
 5. **Pie charts for missing value analysis.**
- * Why this chart was chosen
-      Pie charts clearly show the proportion of missing vs available values for each column, making it easy to identify data quality issues.
- * Insights from the graph 
-      Some columns, like Reviewer, Review, and Rating, have a small percentage of missing values, while others are complete. This helps prioritize cleaning steps.
+ * Why this chart was chosen:
+      * Pie charts clearly show the proportion of missing vs available values for each column, making it easy to identify data quality issues.
+ * Insights from the graph:
+      * Some columns, like Reviewer, Review, and Rating, have a small percentage of missing values, while others are complete. This helps prioritize cleaning steps.
  * Will the gained insights help creating a positive business impact?
-      Yes, ensuring missing values are handled properly improves the reliability of analysis and ML models, leading to better business decisions.
+      * Yes, ensuring missing values are handled properly improves the reliability of analysis and ML models, leading to better business decisions.
  * Are there any insights that lead to negative growth? Justify.
-      Even a small amount of missing critical data (like ratings or reviews) can bias insights and predictions, potentially affecting marketing and service improvements.
+      * Even a small amount of missing critical data (like ratings or reviews) can bias insights and predictions, potentially affecting marketing and service improvements.
 
 
 3. **Hypothesis Testing**
 
-   * **H1:** Cost vs Rating (ANOVA).
+**H1:** Cost vs Rating (ANOVA).
 
    Hypothesis- Do higher-cost restaurants have higher ratings?
+
    -**H0(Null Hypothesis):** There is no significant difference in average ratings between cost categories
+
    -**H1(Alternate Hypothesis):** Average ratings significantly differ across cost categories.
+
    -**Statistical test used to obtain P-Value:**
     One-way ANOVA (Analysis of Variance)
+
    -**Why this test was chosen:**
     ANOVA is suitable because we are comparing the mean ratings across more than two independent groups (Cost Categories: Low, Medium, High, Premium) to see if at least one group differs significantly. It checks if cost impacts the ratings given by customers.
 
-   * **H2:** Pictures vs Rating (Pearson Correlation).
+**H2:** Pictures vs Rating (Pearson Correlation).
 
    Hypothesis- Do restaurant with more pictures have higher ratings?
+
    -**H0(Null Hypothesis):** There is no relationship between number of pictures and ratings
+
    -**H1(Alternate Hypothesis):** Restaurant with more pictures tend to have higher ratings.
+
    - **Statistical test used to obtain P-Value:**
     Pearson Correlation
+
    - **Why this test was chosen:** Because both Pictures and Rating are numeric variables, and we wanted to check if there’s a linear relationship between them.
 
-   * **H3:** Cuisine vs Rating (Top 5 cuisines, ANOVA).
+**H3:** Cuisine vs Rating (Top 5 cuisines, ANOVA).
 
    Hypothesis- Do certain cuisines receive higher ratings than others?
+
    -**H0(Null hypothesis):** Average ratings are the same for all cuisines.
+
    -**H1(Alternate hypothesis):** At least one cuisine has a signnificantly different average rating.
+
    - **Statistical Test Used to Obtain P-Value:**
     One-way ANOVA (Analysis of Variance)
+
    - **Why this test was chosen:**
     Because Cuisine is a categorical variable (Top 5 cuisines) and Rating is numeric. ANOVA helps check if the average ratings differ significantly across different cuisines.
 
-   * **H4:** Sentiment vs Rating (ANOVA).
+**H4:** Sentiment vs Rating (ANOVA).
 
    -**H0(Null hypothesis):** The mean sentiment scores are the same across all rounded rating categories.
+
    -**H1(Alternate hypothesis):** At least one rating category has a different mean sentiment score.
+
    -**Statistical Test Used to Obtain P-Value:**
     One-way ANOVA (f_oneway)
+
    -**Why this test was chosen:**
     Because Rating_Round is categorical and Sentiment is numeric. ANOVA checks if sentiment varies significantly across different rating groups.
 
-   * **H5:** Sentiment vs Cuisine (ANOVA).
+**H5:** Sentiment vs Cuisine (ANOVA).
 
    -**H0(Null Hypothesis):** The mean sentiment scores are the same across the top 5 cuisines.
+
    -**H1(Alternate Hypothesis):** At least one cuisine has a different mean sentiment score.
+
    - **Statistical Test Used to Obtain P-Value:**
     One-way ANOVA (f_oneway)
+    
    -**Why this test was chosen:**
     Cuisine is a categorical variable and sentiment is numeric. ANOVA checks if sentiment significantly differs across the selected cuisine groups.
 
@@ -312,7 +330,7 @@ Overall, the final merged dataset is well-structured, rich in information, and s
 
 * Hyperparameter Optimization:
   Used class_weight='balanced' in Logistic Regression to handle class imbalance. This improved recall and F1-score for minority classes, with overall accuracy ~79% and weighted F1-score 0.81.
-  
+
 1. Explain the ML Model used and it's performance using Evaluation metric Score Chart.
  * ML Model Used:
  A logistic Regression to classify restaurant ratings (Low, Medium, High) from review text using TF-IDF features. SMOTE handled class imbalance, and data was split 80/20 for training/testing.
