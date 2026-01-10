@@ -375,5 +375,10 @@ Overall, the final merged dataset is well-structured, rich in information, and s
 5. Train and evaluate ML model.
 
 ## Conclusion
-This project cleaned and analyzed Zomato restaurant data to uncover insights from ratings, cuisines, costs, and customer reviews. Sentiment and hypothesis analyses highlighted factors affecting ratings, while the Logistic Regression ML model predicted rating categories with ~79% accuracy. Overall, the analysis provides actionable insights for improving service, targeting marketing, and enhancing customer satisfaction.
+The Zomato Restaurant Analysis Project successfully transformed raw restaurant metadata and customer reviews into actionable insights. Through careful data cleaning, missing value handling, and feature engineering, the dataset became structured and analysis-ready. Exploratory Data Analysis revealed trends in ratings, popular cuisines, cost categories, and review sentiment, highlighting both strengths and areas for improvement for restaurants.
 
+Hypothesis testing confirmed relationships between cost, cuisine, pictures, sentiment, and ratings, providing evidence-based insights for business decisions. Sentiment analysis showed that most reviews were positive, aligning well with numerical ratings, and offering a clear signal for customer satisfaction.
+
+The Machine Learning model (Logistic Regression with TF-IDF vectorization) achieved an accuracy of ~79%, effectively predicting rating categories from review text. Feature importance highlighted the key words in reviews influencing ratings, providing interpretable insights for management.
+
+Overall, this project demonstrates that structured analysis and predictive modeling of customer reviews can guide strategic decisions, improve service quality, and optimize marketing, thereby positively impacting restaurant growth and customer satisfaction.
