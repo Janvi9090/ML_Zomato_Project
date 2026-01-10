@@ -25,6 +25,7 @@ from imblearn.over_sampling import SMOTE
 D1 = pd.read_csv('Zomato_Restaurant_names_and_Metadata.csv')
 D2 = pd.read_csv('Zomato_Restaurant_reviews.csv')
 
+# Merge datasets on restaurant name
 merged_D = pd.merge(D1, D2, left_on='Name', right_on='Restaurant', how='inner')
 merged_D.to_csv('Zomato_merged.csv', index=False)
 print("Datasets merged and saved successfully!")
@@ -35,6 +36,7 @@ print("Datasets merged and saved successfully!")
 restaurant = pd.read_csv("Zomato_merged.csv")
 pd.set_option('display.max_columns', None)
 
+# Display basic info
 print(restaurant.head())
 print("Column names: ", restaurant.columns)
 print("Total count of rows and columns: ", restaurant.shape)
@@ -55,7 +57,7 @@ print("Missing values per column:\n", restaurant.isnull().sum())
 missing_counts = restaurant.isnull().sum()
 missing_counts = missing_counts[missing_counts > 0]
 
-# Pie charts for missing values
+# Pie chart visualization for missing values
 for col in missing_counts.index:
     missing = restaurant[col].isnull().sum()
     not_missing = restaurant[col].notnull().sum()
@@ -85,17 +87,17 @@ for col in restaurant.columns:
 if 'Collections' in restaurant.columns:
     restaurant = restaurant.drop(columns=['Collections'])
 
-# Fill missing values
+# Fill missing values with meaningful defaults
 restaurant['Timings'] = restaurant['Timings'].fillna('Not Specified')
 restaurant['Reviewer'] = restaurant['Reviewer'].fillna('Anonymous')
 restaurant['Review'] = restaurant['Review'].fillna('No Review')
-restaurant['Rating'] = restaurant['Rating'].fillna('Rating')
+restaurant['Rating'] = restaurant['Rating'].fillna('Rating')  # convert later
 restaurant['Metadata'] = restaurant['Metadata'].fillna('No Metadata')
 restaurant['Time'] = restaurant['Time'].fillna('Unknown')
 restaurant['Restaurant'] = restaurant['Restaurant'].fillna('Unknown')
 restaurant['Pictures'] = restaurant['Pictures'].fillna(0)
 
-# Convert data types
+# Convert numeric columns
 restaurant['Rating'] = pd.to_numeric(restaurant['Rating'], errors='coerce')
 restaurant['Pictures'] = restaurant['Pictures'].astype(int)
 
@@ -137,6 +139,7 @@ plt.ylabel("Rating")
 plt.show()
 
 # 8.4 Restaurants by Cost Category
+# Clean cost column and categorize
 restaurant['Cost_clean'] = pd.to_numeric(restaurant['Cost'].str.replace('[^0-9]', '', regex=True), errors='coerce')
 bins = [0, 300, 600, 1000, 5000]
 labels = ['Low', 'Medium', 'High', 'Premium']
@@ -164,18 +167,18 @@ plt.show()
 # 9. Hypothesis Testing
 # -------------------------
 
-# 9.1 Hypothesis 1: Cost vs Rating
+# 9.1 H1 - Cost vs Rating (ANOVA)
 anova_data = restaurant[['Cost_Category', 'Rating']].dropna()
 groups = [anova_data[anova_data['Cost_Category'] == cat]['Rating'] for cat in anova_data['Cost_Category'].unique()]
 f_stat, p_value = f_oneway(*groups)
 print("H1 - Cost vs Rating | F-statistic:", f_stat, "P-value:", p_value)
 
-# 9.2 Hypothesis 2: Pictures vs Rating
+# 9.2 H2 - Pictures vs Rating (Correlation)
 corr_data = restaurant[['Pictures', 'Rating']].dropna()
 corr, p_value = pearsonr(corr_data['Pictures'], corr_data['Rating'])
 print("H2 - Pictures vs Rating | Correlation:", corr, "P-value:", p_value)
 
-# 9.3 Hypothesis 3: Cuisine vs Rating
+# 9.3 H3 - Cuisine vs Rating (Top 5 cuisines, ANOVA)
 top_cuisines = restaurant['Cuisines'].value_counts().head(5).index
 cuisines_data = restaurant[restaurant['Cuisines'].isin(top_cuisines)]
 anova_data = cuisines_data[['Cuisines', 'Rating']].dropna()
@@ -186,20 +189,21 @@ print("H3 - Cuisine vs Rating | F-Statistic:", f_stat, "P-Value:", p_value)
 # -------------------------
 # 10. Sentiment Analysis
 # -------------------------
+
 # Clean Review Text
 def clean_review(text):
-    text = str(text).lower()
-    text = re.sub(r'[^a-z0-9\s]', '', text)
-    text = re.sub(r'\s+', ' ', text).strip()
+    text = str(text).lower()  # lowercase
+    text = re.sub(r'[^a-z0-9\s]', '', text)  # remove punctuation
+    text = re.sub(r'\s+', ' ', text).strip()  # remove extra spaces
     return text
 
 restaurant = restaurant.dropna(subset=['Review'])
 restaurant['Cleaned_Review'] = restaurant['Review'].apply(clean_review)
 
-# Sentiment Polarity
+# Calculate sentiment polarity
 restaurant['Sentiment'] = restaurant['Cleaned_Review'].apply(lambda x: TextBlob(x).sentiment.polarity)
 
-# Sentiment Labels
+# Assign sentiment labels
 def sentiment_label(score):
     if score > 0.1: return 'Positive'
     elif score < -0.1: return 'Negative'
@@ -216,13 +220,13 @@ restaurant['Sentiment_Label'].value_counts().plot(
 plt.title("Distribution of Review Sentiment")
 plt.show()
 
-# Hypothesis 4: Sentiment vs Rating
+# H4 - Sentiment vs Rating (ANOVA)
 restaurant['Rating_Round'] = restaurant['Rating'].round()
 groups = [restaurant[restaurant['Rating_Round'] == r]['Sentiment'] for r in restaurant['Rating_Round'].dropna().unique()]
 f_stat, p_value = f_oneway(*groups)
 print("H4 - Sentiment vs Rating | F-Statistic:", f_stat, "P-value:", p_value)
 
-# Hypothesis 5: Sentiment vs Cuisine
+# H5 - Sentiment vs Top Cuisines (ANOVA)
 anova_data = restaurant[restaurant['Cuisines'].isin(top_cuisines)]
 groups = [anova_data[anova_data['Cuisines'] == c]['Sentiment'] for c in top_cuisines]
 f_stat, p_value = f_oneway(*groups)
@@ -231,29 +235,32 @@ print("H5 - Sentiment vs Cuisine | F-Statistic:", f_stat, "P-value:", p_value)
 # -------------------------
 # 11. Feature Engineering and ML Model
 # -------------------------
-# Rating Categories for Classification
+
+# Create rating categories for classification
 restaurant['Rating_Category'] = pd.cut(
     restaurant['Rating'],
     bins=[0, 2.5, 3.5, 5],
     labels=['Low', 'Medium', 'High']
 )
 
+# Drop rows with NaN in features or target to avoid ML errors
 restaurant = restaurant.dropna(subset=['Rating_Category', 'Cleaned_Review'])
+
 # TF-IDF Vectorization
 tfidf = TfidfVectorizer(max_features=5000, ngram_range=(1,2), min_df=3)
 X = tfidf.fit_transform(restaurant['Cleaned_Review'])
 y = restaurant['Rating_Category']
 
-# Train/Test Split
+# Train/Test Split (stratified to preserve class distribution)
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y
 )
 
-# SMOTE Oversampling
+# SMOTE Oversampling to handle class imbalance
 smote = SMOTE(random_state=42)
 X_train_res, y_train_res = smote.fit_resample(X_train, y_train)
 
-# Logistic Regression
+# Logistic Regression Model
 lr = LogisticRegression(max_iter=1000, class_weight='balanced', solver='lbfgs')
 lr.fit(X_train_res, y_train_res)
 
