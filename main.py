@@ -7,6 +7,23 @@ import re
 from textblob import TextBlob
 # add merge code also
 
+D1 = pd.read_csv('Zomato_Restaurant_names_and_Metadata.csv')
+D2 = pd.read_csv('Zomato_Restaurant_reviews.csv')
+
+
+# print("Metadata Columns:\n", D1.columns)
+# print(D1.head(), "\n")
+
+# print("Reviews Columns:\n", D2.columns)
+# print(D2.head())
+
+
+merged_D = pd.merge(D1, D2, left_on='Name', right_on='Restaurant', how='inner')
+
+
+merged_D.to_csv('Zomato_merged.csv', index=False)
+
+print("Datasets merged and saved successfully!")
 
 #display of data
 restaurant = pd.read_csv("Zomato_merged.csv")
@@ -423,101 +440,19 @@ restaurant = restaurant.dropna(subset=['Rating'])
 print("Missing values after are:",restaurant['Rating'].isnull().sum())
 
 # #Common Preprocessing
-# from sklearn.feature_extraction.text import TfidfVectorizer
-# # from scipy.sparse import hstack
-# from sklearn.model_selection import train_test_split
-# from sklearn.linear_model import LogisticRegression
-# from sklearn.metrics import accuracy_score, classification_report
-# from sklearn.pipeline import Pipeline
-# # from sklearn.model_selection import GridSearchCV
-# from imblearn.over_sampling import SMOTE
-# from imblearn.pipeline import Pipeline as ImbPipeline
-# # print(restaurant.columns)
-# smote = SMOTE(random_state=42)
-
-restaurant['Rating_Category'] = pd.cut(
-    restaurant['Rating'],
-    bins=[0, 2.5, 3.5, 5],
-    labels=['Low', 'Medium', 'High']
-)
-
-# restaurant[['Rating', 'Rating_Category']]
-
-# restaurant= restaurant.dropna(subset='Rating_Category')
-# X= restaurant['Cleaned_Review']
-# y= restaurant['Rating_Category']
-
-
-# X_train, X_test, y_train, y_test = train_test_split(
-#     X, y, test_size=0.2, random_state=42, stratify=y
-# )
-
-# X_train_res, y_train_res = smote.fit_resample(X_train, y_train)
-# # pipeline_lr = Pipeline([
-# #     ('tfidf', TfidfVectorizer(
-# #         max_features=5000,
-# #         ngram_range=(1,2),
-# #         min_df=5
-# #     )),
-# #     ('clf', LogisticRegression(
-# #         max_iter=1000,
-# #         class_weight='balanced',
-# #         solver='lbfgs',
-# #         # multi_class= 'multinomial'
-# #     ))
-# # ])
-
-# pipeline = ImbPipeline([
-#     ('tfidf', TfidfVectorizer(max_features=5000, ngram_range=(1,2), min_df=5)),
-#     ('smote', SMOTE(random_state=42)),
-#     ('clf', LogisticRegression(max_iter=1000, class_weight={'Low':1, 'Medium':2, 'High':1}, solver='lbfgs'))
-# ])
-
-# # pipeline_lr.fit(X_train, y_train)
-# # y_pred = pipeline_lr.predict(X_test)
-
-# # # print("Logistic Regression Accuracy: ", accuracy_score(y_test, y_pred))
-# # # print(classification_report(y_test, y_pred))
-
-# # print("Baseline Accuracy:", accuracy_score(y_test, y_pred))
-# # print(classification_report(y_test, y_pred))
-
-# # param_grid={
-# #     'tfidf__max_features': [3000, 5000],
-# #     'clf__C': [0.1, 1, 10]
-# # }
-
-# # grid_lr = GridSearchCV(
-# #     pipeline_lr,
-# #     param_grid,
-# #     cv=5,
-# #     scoring='f1_macro',
-# #     n_jobs=-1
-# # )
-
-# # grid_lr.fit(X_train, y_train)
-
-# # print("Best Parameters: ", grid_lr.best_params_)
-# # print("Best CV Score: ", grid_lr.best_score_)
-
-# # best_model = grid_lr.best_estimator_
-# # y_pred_best= best_model.predict(X_test)
-# # print("Best Model Accuracy:", accuracy_score(y_test, y_pred_best))
-# # print(classification_report(y_test, y_pred_best))
-
-
-# pipeline.fit(X_train, y_train)  # reshape for SMOTE
-# y_pred = pipeline.predict(X_test)
-
-# # Metrics
-# print("Accuracy: ", accuracy_score(y_test, y_pred))
-# print(classification_report(y_test, y_pred))
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, accuracy_score
 from imblearn.over_sampling import SMOTE
+
+
+restaurant['Rating_Category'] = pd.cut(
+    restaurant['Rating'],
+    bins=[0, 2.5, 3.5, 5],
+    labels=['Low', 'Medium', 'High']
+)
 
 #  TF-IDF
 tfidf = TfidfVectorizer(max_features=5000, ngram_range=(1,2), min_df=3)
